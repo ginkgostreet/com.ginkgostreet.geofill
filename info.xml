@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<extension key="com.ginkgostreet.geofill" type="module">
+  <file>geofill</file>
+  <name>Geodata Filler</name>
+  <description>
+    When CiviCRM geocodes an address, the geocoder generally returns much more
+    information than CiviCRM uses. This extension allows you to set a policy for
+    what to do with that information on a field-by-field basis: discard it,
+    fill in missing data, or overwrite existing data.
+  </description>
+  <license>AGPL-3.0</license>
+  <maintainer>
+    <author>Ginkgo Street Labs</author>
+    <email>inquire@ginkgostreet.com</email>
+  </maintainer>
+  <urls>
+    <url desc="Main Extension Page">https://github.com/ginkgostreet/com.ginkgostreet.geofill</url>
+    <url desc="Documentation">https://github.com/ginkgostreet/com.ginkgostreet.geofill</url>
+    <url desc="Support">https://github.com/ginkgostreet/com.ginkgostreet.geofill/issues</url>
+    <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
+  </urls>
+  <releaseDate>2016-12-17</releaseDate>
+  <version>1.0.0-alpha1</version>
+  <develStage>alpha</develStage>
+  <compatibility>
+    <ver>4.7</ver>
+  </compatibility>
+  <comments></comments>
+  <civix>
+    <namespace>CRM/Geofill</namespace>
+  </civix>
+</extension>
