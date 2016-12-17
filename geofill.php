@@ -108,3 +108,26 @@ function geofill_civicrm_navigationMenu(&$menu) {
   ));
   _geofill_civix_navigationMenu($menu);
 } // */
+
+/**
+ * Implements hook_civicrm_geocoderFormat().
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_geocoderFormat
+ */
+function geofill_civicrm_geocoderFormat($geoProvider, &$values, $xml) {
+  try {
+    $parser = CRM_Geofill_ParserFactory::create($geoProvider);
+  }
+  catch (CRM_Core_Exception $e) {
+    Civi::log()->error($e->getMessage(), $e->getErrorData());
+  }
+}
+
+/**
+ * Implements hook_civicrm_geofill_parser.
+ *
+ * @param array $registry
+ */
+function geofill_civicrm_geofill_parser(&$registry) {
+  $registry['Google'] = 'CRM_Geofill_Parser_Google';
+}
