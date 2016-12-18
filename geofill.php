@@ -134,7 +134,7 @@ function geofill_civicrm_geocoderFormat($geoProvider, &$values, $xml) {
 
   foreach ($addressComponents as $field) {
     $method = 'get_' . $field;
-    $fetchedValue = $parser->$method;
+    $fetchedValue = $parser->$method();
     if ($fetchedValue) {
       $values[$field] = $fetchedValue;
     }
