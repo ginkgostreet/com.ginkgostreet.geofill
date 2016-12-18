@@ -19,24 +19,34 @@ interface CRM_Geofill_Parser_Interface {
    */
   public function loadResult(array $data);
 
+  /**
+   * Returns a boolean indicating whether or not the request was successful.
+   *
+   * @return boolean
+   *   We can't actually enforce return values, but this method is expected to
+   *   return a boolean.
+   */
+  public function requestSuccessful();
+
   /*
-   * The following methods return parsed data as strings. Where possible,
-   * abbreviations should be avoided (e.g., return 'Florida' instead of 'FL').
-   * If abbreviations or short names are needed, retrieve them in differently
-   * named methods.
+   * The following methods return data formatted for the relevant database field.
+   * For example, get_city returns a string, and get_country_id returns a numeric
+   * ID.
+   *
+   * The methods break CiviCRM's camelCase naming convention to facilitate
+   * dynamic generation of method names based on the database field names. Sorry,
+   * not sorry.
    */
 
-  public function getFullStreetAddress();
+  public function get_city();
 
-  public function getFullCity();
+  public function get_country_id();
 
-  public function getFullStateProvince();
+  public function get_county_id();
 
-  public function getFullPostalCode();
+  public function get_postal_code();
 
-  public function getFullPostalCodeSuffix();
+  public function get_postal_code_suffix();
 
-  public function getFullCountry();
-
-  public function getFullCounty();
+  public function get_state_province_id();
 }

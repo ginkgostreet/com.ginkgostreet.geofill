@@ -115,11 +115,29 @@ function geofill_civicrm_navigationMenu(&$menu) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_geocoderFormat
  */
 function geofill_civicrm_geocoderFormat($geoProvider, &$values, $xml) {
+  $addressComponents = CRM_Geofill_Utils::getWritableAddressComponents($values);
+  if (!count($addressComponents)) {
+    return;
+  }
+
   try {
     $parser = CRM_Geofill_ParserFactory::create($geoProvider);
   }
   catch (CRM_Core_Exception $e) {
     Civi::log()->error($e->getMessage(), $e->getErrorData());
+  }
+
+  $parser->loadResult(array('xml' => $xml));
+  if (!$parser->requestSuccessful()) {
+    return;
+  }
+
+  foreach ($addressComponents as $field) {
+    $method = 'get_' . $field;
+    $fetchedValue = $parser->$method;
+    if ($fetchedValue) {
+      $values[$field] = $fetchedValue;
+    }
   }
 }
 
