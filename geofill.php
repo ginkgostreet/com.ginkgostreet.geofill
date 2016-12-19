@@ -149,3 +149,26 @@ function geofill_civicrm_geocoderFormat($geoProvider, &$values, $xml) {
 function geofill_civicrm_geofill_parser(&$registry) {
   $registry['Google'] = 'CRM_Geofill_Parser_Google';
 }
+
+/**
+ * Implements hook_civicrm_buildForm().
+ *
+ * Links to extension settings from the core mapping/geocoding settings screen.
+ * Also redirects users there after submitting the core form.
+ *
+ * @link https://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_buildForm
+ */
+function geofill_civicrm_buildForm($formName, CRM_Core_Form &$form) {
+  if ($formName !== 'CRM_Admin_Form_Setting_Mapping') {
+    return;
+  }
+
+  $url = CRM_Utils_System::url('civicrm/admin/geofill');
+  $form->controller->setDestination($url);
+
+  $message = ts("%1Geodata Filler (com.ginkgostreet.geofill)%2 is installed on this system, providing additional configurations for your geocoding services. To access them, you may either save your changes to this form (you will be redirected to the extension settings screen afterward), or %3go there directly%4, abandoning any changes you've made to this form.", array(1 => '<strong>', 2 => '</strong>', 3 => '<a href="' . $url . '">', 4 => '</a>', 'domain' => 'com.ginkgostreet.geofill'));
+  CRM_Core_Region::instance('page-body')->add(array(
+    'markup' => '<p class="help">' . $message . '</p>',
+    'weight' => -10,
+  ));
+}
