@@ -96,18 +96,18 @@ function geofill_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  * Implements hook_civicrm_navigationMenu().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
- *
+ */
 function geofill_civicrm_navigationMenu(&$menu) {
-  _geofill_civix_insert_navigation_menu($menu, NULL, array(
-    'label' => ts('The Page', array('domain' => 'com.ginkgostreet.geofill')),
-    'name' => 'the_page',
-    'url' => 'civicrm/the-page',
-    'permission' => 'access CiviReport,access CiviContribute',
-    'operator' => 'OR',
+  _geofill_civix_insert_navigation_menu($menu, 'Administer/System Settings', array(
+    'label' => ts('Geodata Filler ', array('domain' => 'com.ginkgostreet.geofill')),
+    'name' => 'admin_geofill',
+    'url' => 'civicrm/admin/geofill',
+    'permission' => 'administer CiviCRM',
+    'operator' => 'NULL',
     'separator' => 0,
   ));
   _geofill_civix_navigationMenu($menu);
-} // */
+}
 
 /**
  * Implements hook_civicrm_geocoderFormat().
