@@ -97,6 +97,7 @@ class CRM_Geofill_Form_Settings extends CRM_Core_Form {
     });
 
     Civi::settings()->set('geofill_field_policy', $submission['geofill_field_policy']);
+    CRM_Core_Session::setStatus(ts("Changes Saved", array('domain' => 'com.ginkgostreet.geofill')), "Saved", "success");
   }
 
   public function getOptions() {
