@@ -1,23 +1,85 @@
 <?php
 
-require_once 'CRM/Core/Form.php';
-
 /**
  * Form controller class
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC43/QuickForm+Reference
  */
 class CRM_Geofill_Form_Settings extends CRM_Core_Form {
-  public function buildQuickForm() {
 
-    // add form elements
-    $this->add(
-      'select', // field type
-      'favorite_color', // field name
-      'Favorite Color', // field label
-      $this->getColorOptions(), // list of options
-      TRUE // is required
-    );
+  private $settingMetaData;
+  private $settingName = 'geofill_field_policy';
+  private $settingValue;
+
+  private function getSettingMetaData() {
+    if (!$this->settingMetaData) {
+      $result = civicrm_api3('setting', 'getfields', array(
+        'filters' => array('group' => 'com.ginkgostreet.geofill'),
+      ));
+      $this->settingMetaData = $result['values'][$this->settingName];
+    }
+    return $this->settingMetaData;
+  }
+
+  private function getSettingValue() {
+    if (!$this->settingValue) {
+      $this->settingValue = Civi::settings()->get($this->settingName);
+    }
+    return $this->settingValue;
+  }
+
+  public function setDefaultValues() {
+    $defaults = array();
+    foreach ($this->getSettingValue() as $key => $value) {
+      $fieldName = $this->smartifyFieldName($key);
+      $defaults[$fieldName] = $value;
+    }
+    return $defaults;
+  }
+
+  /**
+   * Smarty is a little funny when it comes to field names with brackets. On the
+   * form class side, an array of bracketed field names is treated as an array
+   * of strings (e.g., in $this->setDefaultValues). On the template side an
+   * array of bracketed field names is treated as an array of arrays. This array:
+   *
+   *   array(
+   *     'my[setting]',
+   *     'my[stuff]',
+   *   );
+   *
+   * is interpeted in the template file as:
+   *
+   *   array(
+   *     'my' => array(
+   *       'setting',
+   *       'stuff',
+   *     );
+   *   );
+   *
+   * This is a small helper method to assist with this issue.
+   *
+   * @param string $fieldName
+   * @return string
+   */
+  public function smartifyFieldName($fieldName) {
+    return "{$this->settingName}[{$fieldName}]";
+  }
+
+  public function buildQuickForm() {
+    $fieldNames = array_keys($this->getSettingValue());
+    foreach ($fieldNames as $fieldName) {
+      $label = CRM_Geofill_Utils::nameToLabel($fieldName);
+      $this->addRadio($this->smartifyFieldName($fieldName), $label, $this->getOptions(), array(), NULL, TRUE);
+    }
+
+    // See comment for $this->smartifyFieldName().
+    $this->assign('settingName', $this->settingName);
+    $this->assign('geofillPolicyFieldNames', $fieldNames);
+
+    $settingMetaData = $this->getSettingMetaData();
+    $this->assign('helpText', $settingMetaData['help_text']);
+
     $this->addButtons(array(
       array(
         'type' => 'submit',
@@ -25,53 +87,24 @@ class CRM_Geofill_Form_Settings extends CRM_Core_Form {
         'isDefault' => TRUE,
       ),
     ));
-
-    // export form elements
-    $this->assign('elementNames', $this->getRenderableElementNames());
-    parent::buildQuickForm();
   }
 
   public function postProcess() {
-    $values = $this->exportValues();
-    $options = $this->getColorOptions();
-    CRM_Core_Session::setStatus(ts('You picked color "%1"', array(
-      1 => $options[$values['favorite_color']]
-    )));
-    parent::postProcess();
+    $submission = $this->exportValues();
+    array_walk($submission['geofill_field_policy'], function (&$item) {
+      // consistency is good; since the defaults are integers, we stick with that
+      $item = (int) $item;
+    });
+
+    Civi::settings()->set('geofill_field_policy', $submission['geofill_field_policy']);
   }
 
-  public function getColorOptions() {
-    $options = array(
-      '' => ts('- select -'),
-      '#f00' => ts('Red'),
-      '#0f0' => ts('Green'),
-      '#00f' => ts('Blue'),
-      '#f0f' => ts('Purple'),
+  public function getOptions() {
+    return array(
+      CRM_Geofill_Utils::POLICY_IGNORE => ts('Discard', array('domain' => 'com.ginkgostreet.geofill')),
+      CRM_Geofill_Utils::POLICY_FILL => ts('Fill', array('domain' => 'com.ginkgostreet.geofill')),
+      CRM_Geofill_Utils::POLICY_OVERWRITE => ts('Overwrite', array('domain' => 'com.ginkgostreet.geofill')),
     );
-    foreach (array('1','2','3','4','5','6','7','8','9','a','b','c','d','e') as $f) {
-      $options["#{$f}{$f}{$f}"] = ts('Grey (%1)', array(1 => $f));
-    }
-    return $options;
   }
 
-  /**
-   * Get the fields/elements defined in this form.
-   *
-   * @return array (string)
-   */
-  public function getRenderableElementNames() {
-    // The _elements list includes some items which should not be
-    // auto-rendered in the loop -- such as "qfKey" and "buttons".  These
-    // items don't have labels.  We'll identify renderable by filtering on
-    // the 'label'.
-    $elementNames = array();
-    foreach ($this->_elements as $element) {
-      /** @var HTML_QuickForm_Element $element */
-      $label = $element->getLabel();
-      if (!empty($label)) {
-        $elementNames[] = $element->getName();
-      }
-    }
-    return $elementNames;
-  }
 }
