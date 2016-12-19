@@ -149,3 +149,55 @@ function geofill_civicrm_geocoderFormat($geoProvider, &$values, $xml) {
 function geofill_civicrm_geofill_parser(&$registry) {
   $registry['Google'] = 'CRM_Geofill_Parser_Google';
 }
+
+/**
+ * Implements hook_civicrm_buildForm().
+ *
+ * Adds extension settings to the mapping/geocoding settings screen.
+ *
+ * @link https://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_buildForm
+ */
+function geofill_civicrm_buildForm($formName, CRM_Core_Form &$form) {
+  if ($formName !== 'CRM_Admin_Form_Setting_Mapping') {
+    return;
+  }
+
+  $setting = Civi::settings()->get('geofill_field_policy');
+  $options = array(
+    CRM_Geofill_Utils::POLICY_IGNORE => ts('Discard', array('domain' => 'com.ginkgostreet.geofill')),
+    CRM_Geofill_Utils::POLICY_FILL => ts('Fill', array('domain' => 'com.ginkgostreet.geofill')),
+    CRM_Geofill_Utils::POLICY_OVERWRITE => ts('Overwrite', array('domain' => 'com.ginkgostreet.geofill')),
+  );
+
+  $defaults = array();
+  foreach ($setting as $key => $value) {
+    $defaults['geofill_' . $key] = $value;
+    $name = 'geofill_' . $key;
+    $label = CRM_Geofill_Utils::nameToLabel($key);
+    $form->addRadio($name, $label, $options, array(), NULL, TRUE);
+  }
+
+  $form->setDefaults($defaults);
+  $form->assign('geofillPolicyFieldNames', array_keys($defaults));
+
+  $settingMetaData = civicrm_api3('setting', 'getfields', array(
+    'filters' => array('group' => 'com.ginkgostreet.geofill'),
+  ));
+  $form->assign('sectionHeader', $settingMetaData['values']['geofill_field_policy']['group_name']);
+  $form->assign('helpText', $settingMetaData['values']['geofill_field_policy']['help_text']);
+
+  Civi::resources()->addScriptFile('com.ginkgostreet.geofill', 'js/settings-form.js');
+  CRM_Core_Region::instance('page-body')->add(array(
+    'template' => "Geofill/partials/CRM/Admin/Form/Setting/Mapping/Policy.tpl"
+  ));
+}
+
+/**
+ * Implements hook_civicrm_postProcess().
+ *
+ * Processes extension settings added to the mapping/geocoding settings screen.
+ *
+ * @link https://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_postProcess
+ */
+function geofill_civicrm_postProcess($formName, CRM_Core_Form &$form) {
+}

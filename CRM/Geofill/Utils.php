@@ -38,4 +38,26 @@ class CRM_Geofill_Utils {
     return $writable;
   }
 
+  /**
+   * Converts machine names to labels for address fields.
+   *
+   * @param string $name
+   *   Machine name
+   * @return string
+   *   Human-readable label
+   */
+  public static function nameToLabel($name) {
+    try {
+      $api = civicrm_api3('Address', 'getfield', array(
+        'name' => $name,
+        'action' => "create",
+      ));
+      $label = $api['values']['title'];
+    }
+    catch (CiviCRM_API3_Exception $e) {
+      $label = $name;
+    }
+    return $label;
+  }
+
 }
