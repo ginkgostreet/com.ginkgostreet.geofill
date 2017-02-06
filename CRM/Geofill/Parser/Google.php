@@ -32,7 +32,7 @@ class CRM_Geofill_Parser_Google implements CRM_Geofill_Parser_Interface {
   private function parseAddressComponents(SimpleXMLElement $geodata) {
     if (isset($geodata->result->address_component) && is_a($geodata->result->address_component, 'SimpleXMLElement')) {
       foreach ($geodata->result->address_component as $component) {
-        $property = $this->getAddressProperty($component->type);
+        $property = is_array($component->type) ? $this->getAddressProperty($component->type[0]) : $this->getAddressProperty($component->type);
         if ($property) {
           // TODO: is the short name always the best to use? should this be configurable?
           $this->addressComponents[$property] = (string) $component->short_name;
