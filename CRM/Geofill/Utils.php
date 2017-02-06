@@ -28,7 +28,7 @@ class CRM_Geofill_Utils {
           // For some reason, some empty address components are represented with
           // a string 'null.' Arguably, this is a core bug that should be
           // corrected rather than worked around.
-          if (!CRM_Utils_Array::value($fieldName, $addressComponents) || CRM_Utils_Array::value($fieldName, $addressComponents) === 'null') {
+          if (!CRM_Utils_Array::value(str_replace('_id', '', $fieldName), $addressComponents) || CRM_Utils_Array::value(str_replace('_id', '', $fieldName), $addressComponents) === 'null') {
             $writable[] = $fieldName;
           }
           break;
