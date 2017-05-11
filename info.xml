@@ -3,11 +3,15 @@
   <file>geofill</file>
   <name>Geodata Filler</name>
   <description>
-    When CiviCRM geocodes an address, the geocoding service generally returns much more
-    information than CiviCRM uses. This extension allows you to set a policy for
-    what to do with that information on a field-by-field basis: discard it,
-    fill in missing data, or overwrite existing data. Settings are managed by
-    visiting "Administer &gt; System Settings &gt; Geodata Filler."
+    When CiviCRM geocodes an address, the geocoding service generally returns a full
+    collection of address fields, including street, city, etc. CiviCRM, however,
+    typically uses only the latitude and longitude fields and discards everything else.
+
+    This extension allows site administrators to set a policy for what to do with that
+    information on a field-by-field basis: discard it, fill in missing data, or
+    overwrite existing data.
+
+    Settings are managed by visiting "Administer &gt; System Settings &gt; Geodata Filler."
   </description>
   <license>AGPL-3.0</license>
   <maintainer>
@@ -27,10 +31,10 @@
     <ver>4.7</ver>
   </compatibility>
   <comments>
-    This extension depends on hook_civicrm_geocoderFormat(), which was introduced
-    in CiviCRM version 4.7.7. This extension declares a new hook
-    hook_civicrm_geofill_parser(), which developers may use to add support for
-    additional geocoding services.
+    This extension requires CiviCRM version 4.7.7 or greater, due to its reliance upon
+    hook_civicrm_geocoderFormat, which was introduced in that version. This extension
+    declares a new hook hook_civicrm_geofill_parser, which developers may use to
+    add support for additional geocoding services.
   </comments>
   <civix>
     <namespace>CRM/Geofill</namespace>

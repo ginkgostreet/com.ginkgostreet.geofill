@@ -1,12 +1,13 @@
 # Geodata Filler (com.ginkgostreet.geofill)
-When CiviCRM geocodes an address, the geocoding service generally returns much more information than CiviCRM
-uses. This extension allows site administrators to set a policy for what to do with that information on a
+When CiviCRM geocodes an address, the geocoding service generally returns a full collection of address fields, including street, city, etc. CiviCRM, however, typically uses only the latitude and longitude fields and discards everything else.
+
+This extension allows site administrators to set a policy for what to do with that information on a
 field-by-field basis: discard it, fill in missing data, or overwrite existing data.
 
 ## Dependencies
-- This extension depends on
-  [hook_civicrm_geocoderFormat()](https://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_geocoderFormat),
-  which was introduced in CiviCRM version 4.7.7.
+- This extension requires CiviCRM version 4.7.7 or greater, due to its reliance upon
+  [hook_civicrm_geocoderFormat](https://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_geocoderFormat),
+  which was introduced in that version.
 - To get anything out of this extension, you must use a [supported geocoding service](CRM/Geofill/Parser)
   or [implement your own](#extensibility).
 
@@ -21,7 +22,7 @@ supported services, have a look at [CRM/Geofill/Parser](CRM/Geofill/Parser).
 Adding another service is a two-step process:
 
 ### Implement `hook_civicrm_geofill_parser()`
-This extension introduces a new hook `hook_civicrm_geofill_parser()`, which allows a developer to register a
+This extension introduces a new hook `hook_civicrm_geofill_parser`, which allows a developer to register a
 geodata-parsing class for the geocoding service of her choosing.
 
 #### Definition
