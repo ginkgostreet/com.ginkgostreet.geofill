@@ -1,8 +1,11 @@
 # Geodata Filler (com.ginkgostreet.geofill)
-When CiviCRM geocodes an address, the geocoding service generally returns a full collection of address fields, including street, city, etc. CiviCRM, however, typically uses only the latitude and longitude fields and discards everything else.
+When CiviCRM geocodes an address, the geocoding service generally returns a full
+collection of address fields, including street, city, etc. CiviCRM, however,
+typically uses only the latitude and longitude fields and discards everything else.
 
 This extension allows site administrators to set a policy for what to do with that information on a
 field-by-field basis: discard it, fill in missing data, or overwrite existing data.
+By default, this extension preserves the core behavior of discarding the additional data.
 
 ## Dependencies
 - This extension requires CiviCRM version 4.7.7 or greater, due to its reliance upon
