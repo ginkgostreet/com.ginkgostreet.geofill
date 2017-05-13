@@ -49,4 +49,10 @@ interface CRM_Geofill_Parser_Interface {
   public function get_postal_code_suffix();
 
   public function get_state_province_id();
+
+  public function get_street_name();
+
+  public function get_street_number();
+
+  public function get_street_unit();
 }

@@ -11,6 +11,9 @@ class CRM_Geofill_Parser_Google implements CRM_Geofill_Parser_Interface {
     'locality' => 'city',
     'postal_code' => 'postal_code',
     'postal_code_suffix' => 'postal_code_suffix',
+    'route' => 'street_name',
+    'street_number' => 'street_number',
+    'subpremise' => 'street_unit',
   );
   private $requestSuccess;
 
@@ -138,6 +141,18 @@ class CRM_Geofill_Parser_Google implements CRM_Geofill_Parser_Interface {
       }
     }
     return $stateProvinceId;
+  }
+
+  public function get_street_name() {
+    return CRM_Utils_Array::value('street_name', $this->addressComponents);
+  }
+
+  public function get_street_number() {
+    return CRM_Utils_Array::value('street_number', $this->addressComponents);
+  }
+
+  public function get_street_unit() {
+    return CRM_Utils_Array::value('street_unit', $this->addressComponents);
   }
 
 }
